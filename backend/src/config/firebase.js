@@ -1,4 +1,5 @@
-import admin from 'firebase-admin';
+import { initializeApp, cert } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -17,14 +18,16 @@ try {
   if (isConfigured) {
     // Replace double escaped newlines
     const formattedPrivateKey = privateKey.replace(/\\n/g, '\n').replace(/"/g, '');
-    admin.initializeApp({
-      credential: admin.credential.cert({
+    
+    initializeApp({
+      credential: cert({
         projectId,
         clientEmail,
         privateKey: formattedPrivateKey,
       })
     });
-    db = admin.firestore();
+    
+    db = getFirestore();
     console.log('🔥 Firebase Admin SDK initialized successfully.');
   } else {
     console.warn('⚠️ WARNING: Firebase configuration is missing or placeholder. Running in Mock In-Memory Database mode.');
